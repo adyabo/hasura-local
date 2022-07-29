@@ -4,22 +4,24 @@ services:
     image: postgres:14
     command: postgres -c jit=off
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST_AUTH_METHOD: 'trust'
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
   graphql-engine:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./hasura/Dockerfile
       args:
         - DB_USER=${POSTGRES_USER}
         - DB_PASSWORD=${POSTGRES_PASSWORD}
         - DB_HOST=${POSTGRES_HOST}
         - DB_PORT=${POSTGRES_PORT}
         - DB_DATABASE=${POSTGRES_DB}
+        - HASURA_ADMIN_SECRET=${HASURA_ADMIN_SECRET}
     restart: always
     depends_on:
       - postgres
